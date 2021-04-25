@@ -23,6 +23,7 @@ export class NovoCarroComponent {
   id: string;
   disable: boolean = false;
   msgErro: string;
+  msgSucess: string;
 
   constructor(private service: CarroService, private router: Router, private route: ActivatedRoute, private messageService: MessageService) {
     this.route.params.subscribe(params => this.id = params['id']);
@@ -47,9 +48,9 @@ export class NovoCarroComponent {
     }
   }
 
-  showViaService() {
+  showViaService(message: string) {
     this.messageService.clear();
-    this.messageService.add({severity:'success', summary:'Sucesso', detail:'Veículo adicionado com sucesso.'});
+    this.messageService.add({severity:'success', summary:'Sucesso', detail: message});
   }
 
   novoCarro() {
@@ -58,7 +59,9 @@ export class NovoCarroComponent {
     if(this.id == undefined){
       this.service.adicionar(valorEmitir).subscribe(resultado => {
         this.limparCampos();
-        this.showViaService();
+
+        this.msgSucess = 'Veículo adicionado com sucesso.';
+        this.showViaService(this.msgSucess);
 
         setTimeout(() => { this.router.navigateByUrl('lista-carros'); }, 1000);
 
@@ -75,7 +78,11 @@ export class NovoCarroComponent {
     }else{
       this.service.atualizar(valorEmitir, this.id).subscribe(resultado => {
         this.limparCampos();
-        this.router.navigateByUrl('lista-carros');
+
+        this.msgSucess = 'Veículo atualizado com sucesso.';
+        this.showViaService(this.msgSucess);
+
+        setTimeout(() => { this.router.navigateByUrl('lista-carros'); }, 1000);
       }, (e) => {
         this.messageService.clear();
         this.msgErro = e.error.message;
